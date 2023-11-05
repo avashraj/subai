@@ -5,6 +5,7 @@ from speechtotext.main import transcribe_audio_to_text
 from datetime import datetime
 import time
 from nltk.tokenize import sent_tokenize
+from random import shuffle
 
 import nltk
 
@@ -69,9 +70,43 @@ async def get_ans(r: Req):
 # Return quiz
 @router.get("/start_quiz", response_model=Quiz)
 async def start_quiz():
-    return Quiz(
-        difficulty=Difficulty.HARD,
-        questions=[
-            Question(text="sample question", choices=["1", "2", "3", "4"], answer="2")
-        ],
-    )
+    # return Quiz(
+    #     difficulty=Difficulty.HARD,
+    #     questions=[
+    #         Question(text="sample question", choices=["1", "2", "3", "4"], answer="2")
+    #     ],
+    # )
+    return await generate_quiz(lecture_id)
+
+
+# Generate a quiz from a lecture
+@router.get("/generate_quiz/{lecture_id}", response_model=Quiz)
+async def generate_quiz(lecture_id: str):
+    # Retrieve the lecture from the database
+    lecture = client.class_(class_name).get_by_id(lecture_id)
+
+    # Tokenize the lecture text into sentences
+    sentences = sent_tokenize(lecture['body'])
+
+    # Create a list to store the questions
+    questions = []
+
+    # For each sentence in the lecture
+    for i, sentence in enumerate(sentences):
+        # Use the sentence as the question
+        question_text = sentence
+
+        # Create a list of choices, using the current sentence as the correct answer
+        # and three other random sentences as wrong answers
+        choices = [sentence, sentences[(i+1)%len(sentences)], sentences[(i+2)%len(sentences)], sentences[(i+3)%len(sentences)]]
+        shuffle(choices)
+        
+        # Add the question to the list
+        questions.append(Question(text=question_text, choices=choices, answer=sentence))
+
+    # Create a quiz with the generated questions
+    quiz = Quiz(questions=questions, difficulty=Difficulty.EASY)  # Change the difficulty as needed
+
+    return quiz
+
+
