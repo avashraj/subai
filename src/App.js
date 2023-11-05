@@ -1,6 +1,7 @@
 import './App.css';
 import FileUpload from './upload.js';
 import React, { useState } from 'react';
+import ScrollableBox from "./text.js";
 
 
 function App() {

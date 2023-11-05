@@ -1,49 +1,46 @@
 import React, { useState } from 'react';
-import React, { useState } from 'react';
 
 function FileUpload() {
-  function FileUpload() {
 
-    const [selectedFile, setSelectedFile] = useState();
-    const [isFilePicked, setIsFilePicked] = useState(false);
+  const [selectedFile, setSelectedFile] = useState();
+  const [isFilePicked, setIsFilePicked] = useState(false);
 
-    const changeHandler = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        setSelectedFile(file);
-        setIsFilePicked(true);
-      } else {
-        setSelectedFile(null);
-        setIsFilePicked(false);
-      }
-    };
-
-
-
-
-    const handleSubmission = async () => {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      try {
-        const endpoint = "http://127.0.0.1:8000/upload_file"
-        const response = await fetch(endpoint, {
-          method: "POST",
-          body: formData,
-          mode: 'cors',
-        });
-
-        if (response.ok) {
-          console.log("Successful File Upload");
-        } else {
-          console.error("Upload failed");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
+  const changeHandler = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setIsFilePicked(true);
+    } else {
+      setSelectedFile(null);
+      setIsFilePicked(false);
+    }
   };
+
+
+
+
+  const handleSubmission = async () => {
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const endpoint = "http://127.0.0.1:8000/upload_file"
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData,
+        mode: 'cors',
+      });
+
+      if (response.ok) {
+        console.log("Successful File Upload");
+      } else {
+        console.error("Upload failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   return (
     <div className="file-upload-container">
@@ -63,6 +60,9 @@ function FileUpload() {
       </div>
     </div>
   )
+};
 
 
-  export default FileUpload;
+
+
+export default FileUpload;
