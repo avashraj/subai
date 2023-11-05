@@ -1,6 +1,6 @@
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, UploadFile
 from .models import Quiz, Difficulty, Question, Answer, Req
-from .db import connect_client, class_name
+from .db import connect_client, class_name, schema
 from speechtotext.main import transcribe_audio_to_text
 from datetime import datetime
 import time
@@ -15,20 +15,23 @@ router = APIRouter()
 client = connect_client()
 
 
-# recv file,save_file, get text, insert text in db and text with id
+# recv file,save_file, get text, insert text in db and return text
 @router.post("/upload_file")
 async def upload_file(file: UploadFile):
     # Save file
     save_path = f"api/upload/{int(time.mktime(datetime.timetuple(datetime.now())))}.mp3"
     with open(save_path, "wb") as f:
         f.write(file.file.read())
-    print(save_path)
+
     # Get text
     text = transcribe_audio_to_text(save_path)
     sentences = [
         {"title": f"{idx}", "body": x} for idx, x in enumerate(sent_tokenize(text))
     ]
 
+    # Delete previous objects, if any
+    client.schema.delete_class(class_name)
+    client.schema.create_class(schema)
     # Batch addition of sentences
     client.batch.configure(batch_size=100, num_workers=3, dynamic=True)
     with client.batch as batch:
