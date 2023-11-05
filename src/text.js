@@ -1,23 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 function ScrollableBox() {
   const [text, setText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchDataFromApi = () => {
+    setIsLoading(true);
+
     // Fetch data from your API
     fetch('http://localhost:8000/answer')
       .then((response) => response.json())
       .then((data) => {
-        setText(data.text); // Assuming your API response has a 'text' property
+        setText(data.text); 
       })
       .catch((error) => {
         console.error('Error fetching data: ', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, []);
+  };
 
   return (
-    <div style={{ width: '300px', height: '200px', overflow: 'auto' }}>
-      <p>{text}</p>
+    <div>
+      <button onClick={fetchDataFromApi} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Fetch Data'}
+      </button>
+      <div style={{ width: '300px', height: '200px', overflow: 'auto' }}>
+        <p>{text}</p>
+      </div>
     </div>
   );
 }
