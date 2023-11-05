@@ -81,20 +81,8 @@ async def get_ans(r: Req):
 # Return quiz
 @router.get("/start_quiz", response_model=Quiz)
 async def start_quiz():
-    # return Quiz(
-    #     difficulty=Difficulty.HARD,
-    #     questions=[
-    #         Question(text="sample question", choices=["1", "2", "3", "4"], answer="2")
-    #     ],
-    # )
-    return await generate_quiz(lecture_id)
-
-
-# Generate a quiz from a lecture
-@router.get("/generate_quiz/{lecture_id}", response_model=Quiz)
-async def generate_quiz(lecture_id: str):
     # Retrieve the lecture from the database
-    lecture = client.class_(lecture_class_name).get_by_id(lecture_id)
+    lecture = client.class_(lecture_class_name)
 
     # Tokenize the lecture text into sentences
     sentences = sent_tokenize(lecture["body"])
