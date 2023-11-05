@@ -15,8 +15,3 @@ app.add_middleware(
 )
 
 app.include_router(routes.router)
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
