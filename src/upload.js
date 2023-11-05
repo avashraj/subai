@@ -16,7 +16,31 @@ function FileUpload() {
         }
     };
 
+
+
     const handleSubmission = () => {
+        const handleSubmission = async () => {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const endpoint = "http://127.0.0.1:8000/upload_file"
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    body: formData,
+                    mode: 'cors',
+                });
+
+                if (response.ok) {
+                    console.log("Successful File Upload");
+                } else {
+                    console.error("Upload failed");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
     };
 
     return (
