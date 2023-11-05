@@ -2,8 +2,16 @@ import './App.css';
 import ScrollableBox from './text';
 import FileUpload from './upload.js';
 import React, { useState } from 'react';
+import response from './upload.js';
 
 function App() {
+  const customCSS = {
+    width: '300px',
+    height: '200px',
+    overflow: 'auto',
+    border: '1px solid #ccc',
+  };
+
   const [textInput, setTextInput] = useState('');
 
   const handleInputChange = (event) => {
@@ -21,7 +29,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-        mode: 'cors',
+        mode:'cors',
       });
 
       if (response.ok) {
@@ -37,13 +45,17 @@ function App() {
 
   return (
     <div className="App">
-      <container className="App-header">
-        <h1>subAI</h1>
-      </container>
+      <h1>subAI</h1>
       <p>Please select a video or audio file from your computer</p>
       <FileUpload />
       <form onSubmit={handleSubmit}>
-        <ScrollableBox />
+      <div>
+      <div style={customCSS}>
+        <p>
+          {response}
+        </p>
+      </div>
+    </div>
         <div>
           <p>Enter any questions: </p>
           <input
@@ -57,7 +69,7 @@ function App() {
         </div>
       </form>
       <div>
-        <button>Generate Practice Problem</button>
+        <button>Practice Problem</button>
       </div>
     </div>
   );
