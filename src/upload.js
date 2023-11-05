@@ -61,6 +61,6 @@ return (
         </div>
     </div>
 )
-}
+
 
 export default FileUpload;
