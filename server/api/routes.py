@@ -45,7 +45,7 @@ async def upload_file(file: UploadFile):
 @router.post("/answer")
 async def get_ans(r: Req):
     # TODO: Make this prompt good!
-    generate_prompt = f"""Provide an answer to the question {r.question} based on the given context with the following Rules:\n
+    generate_prompt = f"""Provide an answer to the question: {r.question} based on the given context with the following Rules:\n
     Rules:
     1. You are a teaching Chatbot.
     2. Answer Questions like a teacher.
