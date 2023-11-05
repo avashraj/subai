@@ -66,7 +66,6 @@ async def get_ans(r: Req):
         .do()
     )
 
-    print(response)
     answer = response["data"]["Get"][lecture_class_name][0]["_additional"]["generate"][
         "groupedResult"
     ]

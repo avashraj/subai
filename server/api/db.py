@@ -29,7 +29,7 @@ convo_schema = {
 
 def connect_client():
     client = weaviate.Client(
-        url="https://hacksc-educate-znzmsuk6.weaviate.network",
+        url="https://my-cluster-we2k9luy.weaviate.network/",
         additional_headers={"X-Cohere-Api-Key": os.environ["COHERE_KEY"]},
         auth_client_secret=auth_config,
     )
