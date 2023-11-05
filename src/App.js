@@ -1,27 +1,43 @@
 import './App.css';
+import ScrollableBox from './text';
 import FileUpload from './upload.js';
 import React, { useState } from 'react';
-import ScrollableBox from "./text.js";
-
 
 function App() {
-
   const [textInput, setTextInput] = useState('');
 
   const handleInputChange = (event) => {
     setTextInput(event.target.value);
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Submitted text:', textInput)
+
+    try {
+      const data = { text: textInput };
+      const response = await fetch('http://localhost:8000/answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        mode:'cors',
+      });
+
+      if (response.ok) {
+        console.log('Text submitted successfully');
+        console.log(data);
+      } else {
+        console.error('Failed to submit text');
+      }
+    } catch (error) {
+      console.error('Error submitting text:', error);
+    }
   }
 
   return (
     <div className="App">
-      <container className="App-header">
-        <h1>subAI</h1>
-      </container>
+      <h1>subAI</h1>
       <p>Please select a video or audio file from your computer</p>
       <FileUpload />
       <form onSubmit={handleSubmit}>
@@ -39,7 +55,7 @@ function App() {
         </div>
       </form>
       <div>
-        <button>Generate Practice Problem</button>
+        <button>Practice Problem</button>
       </div>
     </div>
   );
