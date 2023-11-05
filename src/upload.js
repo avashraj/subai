@@ -32,7 +32,7 @@ function FileUpload(){
             )}
             
             <div>
-                <button onClick={handleSubmission}></button>
+            <button onClick={handleSubmission}></button>
             </div>
         </div>
     )

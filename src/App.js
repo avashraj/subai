@@ -35,7 +35,7 @@ function App() {
       </div>
       </form>
       <div>
-        <h2>Practice Problem</h2> 
+        <button>Practice Problem</button> 
       </div>
     </div>
   );
