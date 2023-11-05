@@ -53,12 +53,9 @@ async def upload_file(file: UploadFile):
 @router.post("/answer")
 async def get_ans(r: Req):
     # TODO: Make this prompt good!
-    generate_prompt = f"""Provide an answer to the question: {r.question} based on the given context with the following Rules:\n
-    Rules:
-    1. You are a teaching Chatbot.
-    2. Answer Questions in simple words.
-    3. Use only the given context for the answer.
-    4. Keep the response Concise and Informative.  
+    generate_prompt = f"""
+    Answer the question using the provided context. Your answer should be in your own words and be no longer than 50 words.
+    Question: {r.question}
     """
 
     response = (
