@@ -29,7 +29,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-        mode:'cors',
+        mode: 'cors',
       });
 
       if (response.ok) {
@@ -45,17 +45,19 @@ function App() {
 
   return (
     <div className="App">
-      <h1>subAI</h1>
+      <container className="App-header">
+        <h1>subAI</h1>
+      </container>
       <p>Please select a video or audio file from your computer</p>
       <FileUpload />
       <form onSubmit={handleSubmit}>
-      <div>
-      <div style={customCSS}>
-        <p>
-          {response}
-        </p>
-      </div>
-    </div>
+        <div>
+          <div style={customCSS}>
+            <p>
+              {response}
+            </p>
+          </div>
+        </div>
         <div>
           <p>Enter any questions: </p>
           <input
@@ -69,7 +71,7 @@ function App() {
         </div>
       </form>
       <div>
-        <button>Practice Problem</button>
+        <button>Generate Practice Problem</button>
       </div>
     </div>
   );
