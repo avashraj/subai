@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile
-from .models import Quiz, Difficulty, Question, Answer, Req
+from .models import Quiz, Difficulty, Question, Req
 from .db import connect_client, class_name, schema
 from speechtotext.main import transcribe_audio_to_text
 from datetime import datetime
@@ -41,9 +41,29 @@ async def upload_file(file: UploadFile):
     return text
 
 
-@router.post("/answer", response_model=Answer)
+# Use Question and context to generate answer (RAG)
+@router.post("/answer")
 async def get_ans(r: Req):
-    return Answer(text="test")
+    # TODO: Make this prompt good!
+    generate_prompt = f"""Provide an answer to the question {r.question} based on the given context with the following Rules:\n
+    Rules:
+    1. You are a teaching Chatbot.
+    2. Answer Questions like a teacher.
+    3. Use only the given context for the answer.
+    """
+
+    response = (
+        client.query.get(class_name, ["body"])
+        .with_generate(grouped_task=generate_prompt)
+        .with_near_text({"concepts": [r.question]})
+        .do()
+    )
+
+    return {
+        "text": response["data"]["Get"][class_name][0]["_additional"]["generate"][
+            "groupedResult"
+        ]
+    }
 
 
 # Return quiz
