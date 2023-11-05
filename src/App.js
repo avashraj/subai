@@ -21,7 +21,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-        mode:'cors',
+        mode: 'cors',
       });
 
       if (response.ok) {
@@ -37,7 +37,9 @@ function App() {
 
   return (
     <div className="App">
-      <h1>subAI</h1>
+      <container className="App-header">
+        <h1>subAI</h1>
+      </container>
       <p>Please select a video or audio file from your computer</p>
       <FileUpload />
       <form onSubmit={handleSubmit}>
@@ -55,7 +57,7 @@ function App() {
         </div>
       </form>
       <div>
-        <button>Practice Problem</button>
+        <button>Generate Practice Problem</button>
       </div>
     </div>
   );
