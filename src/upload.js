@@ -1,64 +1,66 @@
 import React, { useState } from 'react';
+import React, { useState } from 'react';
 
 function FileUpload() {
+  function FileUpload() {
 
-  const [selectedFile, setSelectedFile] = useState();
-  const [isFilePicked, setIsFilePicked] = useState(false);
+    const [selectedFile, setSelectedFile] = useState();
+    const [isFilePicked, setIsFilePicked] = useState(false);
 
-  const changeHandler = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setIsFilePicked(true);
-    } else {
-      setSelectedFile(null);
-      setIsFilePicked(false);
-    }
-  };
-
-  const handleSubmission = async () => {
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    try {
-      const endpoint = "http://127.0.0.1:8000/upload_file"
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-        mode: 'cors',
-      });
-
-      if (response.ok) {
-        console.log("Successful File Upload");
+    const changeHandler = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        setSelectedFile(file);
+        setIsFilePicked(true);
       } else {
-        console.error("Upload failed");
+        setSelectedFile(null);
+        setIsFilePicked(false);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+
+    const handleSubmission = async () => {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const endpoint = "http://127.0.0.1:8000/upload_file"
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: formData,
+          mode: 'cors',
+        });
+
+        if (response.ok) {
+          console.log("Successful File Upload");
+        } else {
+          console.error("Upload failed");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
 
 
 
 
-  return (
-    <div>
-      <input type="file" name="file" onChange={changeHandler} />
-      {isFilePicked ? (
-        <div>
-          <p>Filename: {selectedFile.name}</p>
-          <p> Filetype: {selectedFile.type}</p>
-        </div>
-      ) : (
-        <p>Select a file to show details</p>
-      )}
-
+    return (
       <div>
-        <button onClick={handleSubmission}>Upload</button>
-      </div>
-    </div>
-  )
-}
+        <input type="file" name="file" onChange={changeHandler} />
+        {isFilePicked ? (
+          <div>
+            <p>Filename: {selectedFile.name}</p>
+            <p> Filetype: {selectedFile.type}</p>
+          </div>
+        ) : (
+          <p>Select a file to show details</p>
+        )}
 
-export default FileUpload;
+        <div>
+          <button onClick={handleSubmission}>Upload</button>
+        </div>
+      </div>
+    )
+  }
+
+  export default FileUpload;
