@@ -12,8 +12,9 @@ from datetime import datetime
 import time
 from nltk.tokenize import sent_tokenize
 from random import shuffle
-
+import replicate
 import nltk
+
 
 nltk.download("punkt")
 
@@ -78,7 +79,7 @@ async def get_ans(r: Req):
     return {"text": answer}
 
 
-# Return quiz
+# Return placeholder quiz
 @router.get("/start_quiz", response_model=Quiz)
 async def start_quiz():
     # Retrieve the lecture from the database
@@ -114,3 +115,37 @@ async def start_quiz():
     )  # Change the difficulty as needed
 
     return quiz
+
+# Return smart quiz
+@router.get("/start_quiz_smart", response_model=Quiz)
+async def start_smart_quiz():
+    diff = Difficulty.EASY
+    prompt = "Generate an academic question-answer pair with difficulty %s separated by a tab based on the input conversation. Generate additional false answers and add to the output string, also separated between each other by a tab", diff
+    output = replicate.run(
+    "replicate/llama-13b-lora:4baede730d6bc13396e6dec0df5172bff658c014da9552bc17decfd6453d368c",
+    input={
+        "debug": False,
+        "top_p": 1,
+        "prompt": prompt,
+        "max_length": 500,
+        "temperature": 0.75,
+        "repetition_penalty": 1
+    }
+    )
+    # Parse the output and store the question and answer in a pair, and store the correct answer and the false answers in a list in random order
+    questions = []
+    for line in output.split("\n"):
+        if line == "":
+            continue
+        question, answer, *false_answers = line.split("\t")
+        choices = [answer] + false_answers
+        shuffle(choices)
+        questions.append(Question(text=question, choices=choices, answer=answer))
+    
+    # Create a quiz with the generated questions
+    quiz = Quiz(
+        questions=questions, difficulty=diff
+    )
+    
+
+
