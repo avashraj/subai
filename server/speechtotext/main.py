@@ -1,11 +1,8 @@
 import whisper
 
-audio_path = "sample1.flac"
+def transcribe_audio_to_text(audio_file_path):
 
-model = whisper.load_model("base")
-result = model.transcribe( audio_path, fp16=False)
-
-with open("transcription_sample.txt", "w") as file:
-    file.write(result["text"])
-
+    model = whisper.load_model("base")
+    result = model.transcribe( audio_path, fp16=False)
+    return result["text"]
 
