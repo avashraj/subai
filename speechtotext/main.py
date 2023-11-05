@@ -1,7 +1,11 @@
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from datasets import load_dataset
+import whisper
 
-processor = WhisperProcessor.from_pretrained("openai/whisper-medium.en")
-model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-medium.en")
+audio_path = "sample1.flac"
 
-print("model loaded successfully")
+model = whisper.load_model("base")
+result = model.transcribe( audio_path, fp16=False)
+
+with open("transcription_sample.txt", "w") as file:
+    file.write(result["text"])
+
+
