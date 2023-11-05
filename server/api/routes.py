@@ -65,8 +65,11 @@ async def get_ans(r: Req):
         client.query.get(lecture_class_name, ["body"])
         .with_generate(grouped_task=generate_prompt)
         .with_near_text({"concepts": [r.question]})
+        .with_limit(10)
         .do()
     )
+
+    print(response)
     answer = response["data"]["Get"][lecture_class_name][0]["_additional"]["generate"][
         "groupedResult"
     ]
