@@ -83,7 +83,7 @@ async def get_ans(r: Req):
 @router.get("/start_quiz", response_model=Quiz)
 async def start_quiz():
     # Retrieve the lecture from the database
-    lecture = client.class_(lecture_class_name)
+    client.query.get(convo_class_name, ["question", "answer"])
 
     # Tokenize the lecture text into sentences
     sentences = sent_tokenize(lecture["body"])
@@ -121,31 +121,43 @@ async def start_quiz():
 @router.get("/start_quiz_smart", response_model=Quiz)
 async def start_smart_quiz():
     questions = []
-    # Fetch all conversations from db
-    convos = client.class_(convo_class_name).get()
+    # Fetch all conversations from db 
+    query = client.query.get(convo_class_name, ["question", "answer"])
+    convos = query.do()["data"]["Get"][convo_class_name]
     # Store all conversations in a string
     convo_string = ""
     for convo in convos:
-        convo_string += convo["question"] + " " + convo["answer"] + " "
+        convo_string += "Question: " + str(convo["question"]) + "\n" + "Answer: " + str(convo["answer"]) + "\n"
     # Generate questions based on convo_string
-    diff = Difficulty.EASY
-    prompt = "Generate an academic question-answer pair with difficulty %s separated by a tab based on the input conversation. Generate additional false answers and add to the output string, also separated between each other by a tab", diff
-    prompt = prompt % diff
+    diff = Difficulty.MEDIUM
+    # Convert difficulty to string
+    if diff == Difficulty.EASY:
+        diff = "easy"
+    elif diff == Difficulty.MEDIUM:
+        diff = "medium"
+    else:
+        diff = "hard"
+    prompt = "\nBased on the input conversation, generate an academic question and at least four possible answers - the first one being true and the rest false - with a difficulty of {diff}. The question and all choices are separated with a tab in between. An example output is: \n\nWhat is the capital of France?\tParis\tLondon\tBerlin\tMadrid\n\n"
     # Parse the conversation string into the start of the prompt
     prompt = convo_string + prompt
     for i in range(10):
         output = replicate.run(
-        "replicate/llama-13b-lora:4baede730d6bc13396e6dec0df5172bff658c014da9552bc17decfd6453d368c",
-        input={
-            "debug": False,
-            "top_p": 1,
-            "prompt": prompt,
-            "max_length": 500,
-            "temperature": 0.75,
-            "repetition_penalty": 1
-        }
+            "meta/llama-2-7b-chat:13c3cdee13ee059ab779f0291d29054dab00a47dad8261375654de5540165fb0",
+            input={
+                "debug": False,
+                "top_k": -1,
+                "top_p": 1,
+                "prompt": prompt,
+                "temperature": 0.75,
+                "system_prompt": "You are a quiz generating AI. The conversation is a question asked by a student and a corresponding answer, your job is to test the knowledge of the student by generating a quiz containing at most 5 multiple choice questions that test if the student understood the topic.\n\nUse only the context provided in the Conversation to generate the response.",
+                "max_new_tokens": 1000,
+                "min_new_tokens": -1,
+                "repetition_penalty": 1
+            }
         )
         # Parse the output and store the question and answer in a pair, and store the correct answer and the false answers in a list in random order
+        output = str(output)
+        print(output)
         for line in output.split("\n"):
             if line == "":
                 continue
